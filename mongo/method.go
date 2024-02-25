@@ -42,18 +42,18 @@ func GetOneLatestDoc[T any](db *mongo.Database, collection string, filter bson.M
 	return
 }
 
-func GetAllDocByFilter[T any](db *mongo.Database, collection string, filter bson.M) (doc T) {
+func GetAllDocByFilter[T any](db *mongo.Database, collection string, filter bson.M, result interface{}) error {
 	ctx := context.TODO()
 	cur, err := db.Collection(collection).Find(ctx, filter)
 	if err != nil {
-		fmt.Printf("GetAllDoc: %v\n", err)
+		return err
 	}
 	defer cur.Close(ctx)
-	err = cur.All(ctx, &doc)
+	err = cur.All(ctx, result)
 	if err != nil {
-		fmt.Printf("GetAllDoc Cursor Err: %v\n", err)
+		return err
 	}
-	return
+	return nil
 }
 
 func GetAllDoc[T any](db *mongo.Database, collection string) (doc T) {
