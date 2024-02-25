@@ -25,8 +25,8 @@ func InsertOneDoc(db *mongo.Database, collection string, doc interface{}) (inser
 	return insertResult.InsertedID
 }
 
-func GetOneDoc[T any](db *mongo.Database, collection string, filter bson.M) (doc T) {
-	err := db.Collection(collection).FindOne(context.TODO(), filter).Decode(&doc)
+func GetOneDoc[T any](db *mongo.Database, collection string, filter bson.M) (doc T, err error) {
+	err = db.Collection(collection).FindOne(context.TODO(), filter).Decode(&doc)
 	if err != nil {
 		fmt.Printf("GetOneDoc: %v\n", err)
 	}
@@ -37,7 +37,7 @@ func GetOneLatestDoc[T any](db *mongo.Database, collection string, filter bson.M
 	opts := options.FindOne().SetSort(bson.M{"$natural": -1})
 	err = db.Collection(collection).FindOne(context.TODO(), filter, opts).Decode(&doc)
 	if err != nil {
-		return
+		fmt.Printf("GetOneLatestDoc: %v\n", err)
 	}
 	return
 }
@@ -56,11 +56,12 @@ func GetAllDocByFilter[T any](db *mongo.Database, collection string, filter bson
 	return nil
 }
 
-func GetAllDoc[T any](db *mongo.Database, collection string) (doc T) {
+func GetAllDoc[T any](db *mongo.Database, collection string) (doc []T, err error) {
 	ctx := context.TODO()
 	cur, err := db.Collection(collection).Find(ctx, bson.M{})
 	if err != nil {
 		fmt.Printf("GetAllDoc: %v\n", err)
+		return nil, err
 	}
 	defer cur.Close(ctx)
 	err = cur.All(ctx, &doc)
@@ -70,9 +71,9 @@ func GetAllDoc[T any](db *mongo.Database, collection string) (doc T) {
 	return
 }
 
-func GetAllDistinctDoc(db *mongo.Database, filter bson.M, fieldname, collection string) (doc []any) {
+func GetAllDistinctDoc(db *mongo.Database, filter bson.M, fieldname, collection string) (doc []interface{}, err error) {
 	ctx := context.TODO()
-	doc, err := db.Collection(collection).Distinct(ctx, fieldname, filter)
+	doc, err = db.Collection(collection).Distinct(ctx, fieldname, filter)
 	if err != nil {
 		fmt.Printf("GetAllDistinctDoc: %v\n", err)
 	}
