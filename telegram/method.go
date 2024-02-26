@@ -11,7 +11,7 @@ import (
 	"strconv"
 )
 
-func sendMessage(apiKey string, chatID interface{}, message string) error {
+func SendMessage(apiKey string, chatID interface{}, message string) error {
 	// Check the type of chatID and convert it accordingly
 	chatIDValue := ""
 	switch v := chatID.(type) {
@@ -51,7 +51,7 @@ func sendMessage(apiKey string, chatID interface{}, message string) error {
 	return nil
 }
 
-func sendDocument(token, chatID interface{}, filePath, caption string) error {
+func SendDocument(token, chatID interface{}, filePath, caption string) error {
 	// Check the type of chatID and convert it accordingly
 	chatIDValue := ""
 	switch v := chatID.(type) {
