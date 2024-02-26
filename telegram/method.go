@@ -8,11 +8,23 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"strconv"
 )
 
-func SendMessage(apiKey string, chatID int64, message string) error {
+func sendMessage(apiKey string, chatID interface{}, message string) error {
+	// Check the type of chatID and convert it accordingly
+	chatIDValue := ""
+	switch v := chatID.(type) {
+	case int64:
+		chatIDValue = strconv.FormatInt(v, 10)
+	case string:
+		chatIDValue = v
+	default:
+		return fmt.Errorf("unsupported chatID type: %T", chatID)
+	}
+
 	requestBody, err := json.Marshal(map[string]interface{}{
-		"chat_id": chatID,
+		"chat_id": chatIDValue,
 		"text":    message,
 	})
 	if err != nil {
@@ -39,7 +51,18 @@ func SendMessage(apiKey string, chatID int64, message string) error {
 	return nil
 }
 
-func SendDocument(token, chatID, filePath, caption string) error {
+func sendDocument(token, chatID interface{}, filePath, caption string) error {
+	// Check the type of chatID and convert it accordingly
+	chatIDValue := ""
+	switch v := chatID.(type) {
+	case int64:
+		chatIDValue = strconv.FormatInt(v, 10)
+	case string:
+		chatIDValue = v
+	default:
+		return fmt.Errorf("unsupported chatID type: %T", chatID)
+	}
+
 	// Open the file
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -62,7 +85,7 @@ func SendDocument(token, chatID, filePath, caption string) error {
 	}
 
 	// Add other form fields
-	_ = writer.WriteField("chat_id", chatID)
+	_ = writer.WriteField("chat_id", chatIDValue)
 	_ = writer.WriteField("caption", caption)
 	_ = writer.WriteField("parse_mode", "html")
 
