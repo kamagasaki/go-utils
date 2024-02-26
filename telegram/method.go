@@ -26,6 +26,7 @@ func SendMessage(apiKey string, chatID interface{}, message string) error {
 	requestBody, err := json.Marshal(map[string]interface{}{
 		"chat_id": chatIDValue,
 		"text":    message,
+		"parse_mode": "html".
 	})
 	if err != nil {
 		return fmt.Errorf("failed to marshal JSON: %w", err)
