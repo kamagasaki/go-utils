@@ -24,9 +24,9 @@ func SendMessage(apiKey string, chatID interface{}, message string) error {
 	}
 
 	requestBody, err := json.Marshal(map[string]interface{}{
-		"chat_id": chatIDValue,
-		"text":    message,
-		"parse_mode": "html".
+		"chat_id":    chatIDValue,
+		"text":       message,
+		"parse_mode": "Markdown",
 	})
 	if err != nil {
 		return fmt.Errorf("failed to marshal JSON: %w", err)
@@ -88,7 +88,7 @@ func SendDocument(token, chatID interface{}, filePath, caption string) error {
 	// Add other form fields
 	_ = writer.WriteField("chat_id", chatIDValue)
 	_ = writer.WriteField("caption", caption)
-	_ = writer.WriteField("parse_mode", "html")
+	_ = writer.WriteField("parse_mode", "Markdown")
 
 	// Close the multipart writer
 	err = writer.Close()
