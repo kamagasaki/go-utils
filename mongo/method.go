@@ -108,3 +108,11 @@ func DeleteDoc(db *mongo.Database, collection string, filter bson.M) (result *mo
 	}
 	return
 }
+
+func CountDocuments(db *mongo.Database, collection string, filter bson.M) (count int64, err error) {
+	count, err = db.Collection(collection).CountDocuments(context.TODO(), filter)
+	if err != nil {
+		fmt.Printf("CountDocuments: %v\n", err)
+	}
+	return count, err
+}
