@@ -116,3 +116,12 @@ func CountDocuments(db *mongo.Database, collection string, filter bson.M) (count
 	}
 	return count, err
 }
+
+func GetOneDocByFilter[T any](db *mongo.Database, collection string, filter bson.M, result interface{}) error {
+	ctx := context.TODO()
+	err := db.Collection(collection).FindOne(ctx, filter).Decode(result)
+	if err != nil {
+		return err
+	}
+	return nil
+}
